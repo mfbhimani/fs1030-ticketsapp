@@ -14,10 +14,14 @@ const port = 5000;
 // create connection to database
 // the mysql.createConnection function takes in a configuration object which contains host, user, password and the database name.
 const db = mysql.createConnection ({
-    host: 'localhost',
+    /* host: 'localhost',
     user: 'root',
     password: 'Mf786114@',
-    database: 'assg2tickets'
+    database: 'assg2tickets' */
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
 });
 
 // connect to database
@@ -53,6 +57,6 @@ app.post('/register', addCustomer);
 
 
 // set the app to listen on the port
-app.listen(port, () => {
-    console.log(`Server running on port: ${port}`);
+app.listen(process.env.HTTP_PORT, () => {
+    console.log(`Server running on port: ${process.env.HTTP_PORT}`);
 });
