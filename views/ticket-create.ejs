@@ -1,0 +1,35 @@
+<% include partials/header.ejs %>
+    <div class="container">
+        <% if (message != '') { %>
+            <p class="text-center text-danger"><%= message %></p>
+        <% } %>
+        <form class="ticket-create-form" action="" method="post" enctype="multipart/form-data">
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label for="ticket-subject">Ticket Subject</label>
+                    <input type="text" class="form-control" name="ticket_subject" id="ticket-subject" placeholder="Ticket Subject" required>
+                </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                    <label for="ticket-comments">Ticket Comments</label>
+                    <input type="text" class="form-control" name="ticket_comments" id="ticket-comments" placeholder="Ticket Comments" required>
+                </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                    <label for="ticket-status">Ticket Status</label>
+                    <select id="ticket-status" name="ticket_status" class="form-control" required>
+                        <option selected disabled>Choose Status</option>
+                        <option>Pending</option>
+                        <option>Resolved</option>
+                        <option>Cancelled</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary float-left">Create Ticket</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

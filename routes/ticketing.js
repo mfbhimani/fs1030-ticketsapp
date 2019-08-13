@@ -46,6 +46,85 @@ module.exports = {
                  
             }
         });
+    },
+    addTicketPage: (req, res) => {
+        res.render('ticket-create.ejs', {
+            title: "Create New Ticket"
+            ,message: ''
+        });
+    },
+    addTicket: (req, res) => {
+
+        console.log('here 2');
+        console.log(req.body);
+        let message = '';
+        let user_id = req.params.id;
+        let ticket_subject = req.body.ticket_subject;
+        let ticket_comments = req.body.ticket_comments;
+        let ticket_status = req.body.ticket_status;
+
+        // console.log(`first name is ${first_name}`) 
+
+        let usernameQuery = "SELECT * FROM `users` WHERE userid = '" + user_id + "'";
+
+        db.query(usernameQuery, (err, result) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            if (result.length = 0) {
+                message = 'User ID does not exist in db';
+                res.render('ticket-create.ejs', {
+                    message,
+                    title: "Create New Ticket"
+                });
+            } else {              
+                        // enter ticket details to the database
+                        let query = "INSERT INTO `tickets` (ticket_subject, ticket_comments, ticket_status, userid) VALUES ('" +
+                            ticket_subject + "', '" + ticket_comments + "', '" + ticket_status + "', '" + user_id + "')";
+                        db.query(query, (err, result) => {
+                            if (err) {
+                                return res.status(500).send(err);
+                            }
+                            res.redirect('/');
+                        });
+                 
+            }
+        });
+    },
+    viewOpenTicketsPage: (req, res) => {
+        let user_id = req.params.id;
+        let query = "SELECT tickets.ticket_subject, tickets.ticket_comments, tickets.ticket_status, tickets.ticketid, tickets.ticket_creation_date, users.first_name, users.last_name FROM `tickets` JOIN `users` ON tickets.userid = users.userid WHERE  tickets.userid = '" + user_id + "' ORDER BY tickets.ticket_creation_date DESC"; // query database to get all the players
+
+        // execute query
+        db.query(query, (err, result) => {
+            if (err) {
+                res.redirect('/');
+            }
+            res.render('ticketsopen-view.ejs', {
+                title: "View Open Tickets"
+                ,tickets: result
+            });
+        });
+
+    },
+    viewTicketDetailsPage: (req, res) => {
+        let ticket_id = req.params.id;
+        let message = '';
+        let query = "SELECT tickets.ticket_subject, tickets.ticket_comments, tickets.ticket_status, tickets.ticketid, tickets.ticket_creation_date, users.first_name, users.last_name, users.email, users.phone FROM `tickets` JOIN `users` ON tickets.userid = users.userid WHERE  tickets.ticketid = '" + ticket_id + "'"; // query database to get all the players
+
+        // execute query
+        db.query(query, (err, result) => {
+            if (err) {
+                res.redirect('/');
+            }
+            
+            res.render('ticket-details.ejs', {
+                message,
+                title: "View Ticket Details"
+                ,ticket: result
+            });
+        });
+
     }
     /* editPlayerPage: (req, res) => {
         let playerId = req.params.id;

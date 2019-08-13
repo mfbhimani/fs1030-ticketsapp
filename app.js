@@ -7,7 +7,7 @@ const app = express();
 require('dotenv').config();
 
 const {getHomePage} = require('./routes/index');
-const {addCustomerPage, addCustomer} = require('./routes/ticketing');
+const {addCustomerPage, addCustomer, addTicketPage, addTicket, viewOpenTicketsPage, viewTicketDetailsPage} = require('./routes/ticketing');
 // const {addPlayerPage, addPlayer, deletePlayer, editPlayer, editPlayerPage} = require('./routes/player');
 
 // const port = 5000;
@@ -56,7 +56,22 @@ app.post('/edit/:id', editPlayer); */
 
 app.get('/', getHomePage);
 app.get('/register', addCustomerPage);
+app.get('/add-ticket/:id', addTicketPage);
+app.get('/tickets-viewopen/:id', viewOpenTicketsPage);
+app.get('/ticket-view/:id', viewTicketDetailsPage);
 app.post('/register', addCustomer);
+app.post('/add-ticket/:id', addTicket);
+// app.post('/tickets-viewopen/:id', viewOpenTickets);
+
+/* app.get('/login', loginUserPage);
+app.get('/tickets-viewopen/:id', viewOpenTicketsPage);
+app.get('/add-ticket/:id', addTicketPage);
+app.get('/ticket-view/:id', viewTicketDetailsPage);
+app.post('/register', addCustomer);
+app.post('/login', loginuser);
+app.post('/tickets-viewopen/:id', viewOpenTickets);
+app.post('/add-ticket/:id', addTicket);
+app.post('/ticket-view/:id', viewTicketDetails); */
 
 
 // set the app to listen on the port

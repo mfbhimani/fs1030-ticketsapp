@@ -1,0 +1,33 @@
+<% include partials/header.ejs %>
+    <div class="table-wrapper">
+        <% if (tickets.length > 0) {%>
+           <p><b>Tickets for: </b> <%= tickets[0].first_name %> <%= tickets[0].last_name %> </p>
+            <table class="table table-hovered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col">Comments</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Created Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% tickets.forEach((ticket, index) => { %>
+                        <tr>
+                            <th scope="row"><%= ticket.ticketid %></th>
+                            <td><%= ticket.ticket_subject %></td>
+                            <td><%= ticket.ticket_comments %></td>
+                            <td><%= ticket.ticket_status %></td>
+                            <td><%= ticket.ticket_creation_date %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p class="text-center">No tickets found.</p>
+        <% } %>
+    </div>
+</div>
+</body>
+</html>
