@@ -2,6 +2,8 @@
     <div class="table-wrapper">
         <% if (tickets.length > 0) {%>
            <p><b>Tickets for: </b> <%= tickets[0].first_name %> <%= tickets[0].last_name %> </p>
+           
+           <p><a href="/add-ticket/<%= tickets[0].userid %>" class="btn btn-success" role="button">Create Ticket</a></p>
             <table class="table table-hovered">
                 <thead class="thead-dark">
                     <tr>
@@ -16,7 +18,7 @@
                     <% tickets.forEach((ticket, index) => { %>
                         <tr>
                             <th scope="row"><%= ticket.ticketid %></th>
-                            <td><%= ticket.ticket_subject %></td>
+                            <td><a href="/ticket-view/<%= ticket.ticketid %>"><%= ticket.ticket_subject %></a></td>
                             <td><%= ticket.ticket_comments %></td>
                             <td><%= ticket.ticket_status %></td>
                             <td><%= ticket.ticket_creation_date %></td>
@@ -25,6 +27,7 @@
                 </tbody>
             </table>
         <% } else { %>
+           <p><a href="/add-ticket/<%= userinfo %>" class="btn btn-success" role="button">Create Ticket</a></p>
             <p class="text-center">No tickets found.</p>
         <% } %>
     </div>

@@ -7,13 +7,8 @@ const app = express();
 require('dotenv').config();
 
 const {getHomePage} = require('./routes/index');
-const {addCustomerPage, addCustomer, addTicketPage, addTicket, viewOpenTicketsPage, viewTicketDetailsPage} = require('./routes/ticketing');
-// const {addPlayerPage, addPlayer, deletePlayer, editPlayer, editPlayerPage} = require('./routes/player');
+const {addCustomerPage, addCustomer, addTicketPage, addTicket, viewOpenTicketsPage, viewTicketDetailsPage, loginPage, loginUser, updateTicket} = require('./routes/ticketing');
 
-// const port = 5000;
-
-// create connection to database
-// the mysql.createConnection function takes in a configuration object which contains host, user, password and the database name.
 const db = mysql.createConnection ({
     /* host: 'localhost',
     user: 'root',
@@ -45,33 +40,16 @@ app.use(bodyParser.json()); // parse form data client
 app.use(express.static(path.join(__dirname, 'public'))); // configure express to use public folder
 app.use(fileUpload()); // configure fileupload
 
-// routes for the app
-
-/* app.get('/', getHomePage);
-app.get('/add', addPlayerPage);
-app.get('/edit/:id', editPlayerPage);
-app.get('/delete/:id', deletePlayer);
-app.post('/add', addPlayer);
-app.post('/edit/:id', editPlayer); */
-
 app.get('/', getHomePage);
 app.get('/register', addCustomerPage);
+app.get('/login', loginPage);
 app.get('/add-ticket/:id', addTicketPage);
 app.get('/tickets-viewopen/:id', viewOpenTicketsPage);
 app.get('/ticket-view/:id', viewTicketDetailsPage);
 app.post('/register', addCustomer);
+app.post('/login', loginUser);
 app.post('/add-ticket/:id', addTicket);
-// app.post('/tickets-viewopen/:id', viewOpenTickets);
-
-/* app.get('/login', loginUserPage);
-app.get('/tickets-viewopen/:id', viewOpenTicketsPage);
-app.get('/add-ticket/:id', addTicketPage);
-app.get('/ticket-view/:id', viewTicketDetailsPage);
-app.post('/register', addCustomer);
-app.post('/login', loginuser);
-app.post('/tickets-viewopen/:id', viewOpenTickets);
-app.post('/add-ticket/:id', addTicket);
-app.post('/ticket-view/:id', viewTicketDetails); */
+app.post('/ticket-view/:id', updateTicket);
 
 
 // set the app to listen on the port

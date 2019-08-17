@@ -7,6 +7,40 @@ module.exports = {
             ,message: ''
         });
     },
+    loginPage: (req, res) => {
+        res.render('login.ejs', {
+            title: "Login to Ticketing site"
+            ,message: ''
+        });
+    },
+    loginUser: (req, res) => {
+        console.log('here 3');
+        console.log(req.body);
+        let message = '' ;
+
+        let username = req.body.username;
+        let password = req.body.password;
+
+        let usernameQuery = "SELECT * FROM `users` WHERE username = '" + username + "' AND password = '" + password + "'";
+
+        db.query(usernameQuery, (err, result) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            if (result.length > 0) {
+                res.redirect('/tickets-viewopen/' + result[0].userid);
+            } else {
+                
+                message = 'Incorect login info provided to access site';
+                res.render('login.ejs', {
+                    message,
+                    title: "Login to Ticketing site"
+                });
+
+            }
+        }); 
+
+    },
     addCustomer: (req, res) => {
 
         console.log('here 1');
@@ -34,7 +68,7 @@ module.exports = {
                     title: "Register New Customer"
                 });
             } else {              
-                        // send the player's details to the database
+                        
                         let query = "INSERT INTO `users` (first_name, last_name, email, phone, username, password, role) VALUES ('" +
                             first_name + "', '" + last_name + "', '" + email + "', '" + phone + "', '"  + username + "', '" + password + "', 'customer')";
                         db.query(query, (err, result) => {
@@ -53,6 +87,24 @@ module.exports = {
             ,message: ''
         });
     },
+    updateTicket: (req, res) => {
+
+        console.log('here 2');
+        console.log(req.body);
+        let message = '';
+        let ticket_id = req.params.id;
+        let ticket_comments = req.body.ticket_comments;
+
+        let usernameQuery = "UPDATE `tickets` SET ticket_comments = '" + ticket_comments + "' WHERE ticketid = '" + ticket_id + "'";
+
+        db.query(usernameQuery, (err, result) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            res.redirect('/ticket-view/' + ticket_id);
+        });
+            
+    }, 
     addTicket: (req, res) => {
 
         console.log('here 2');
@@ -85,7 +137,7 @@ module.exports = {
                             if (err) {
                                 return res.status(500).send(err);
                             }
-                            res.redirect('/');
+                            res.redirect('/tickets-viewopen/' + user_id);
                         });
                  
             }
@@ -93,7 +145,7 @@ module.exports = {
     },
     viewOpenTicketsPage: (req, res) => {
         let user_id = req.params.id;
-        let query = "SELECT tickets.ticket_subject, tickets.ticket_comments, tickets.ticket_status, tickets.ticketid, tickets.ticket_creation_date, users.first_name, users.last_name FROM `tickets` JOIN `users` ON tickets.userid = users.userid WHERE  tickets.userid = '" + user_id + "' ORDER BY tickets.ticket_creation_date DESC"; // query database to get all the players
+        let query = "SELECT tickets.ticket_subject, tickets.ticket_comments, tickets.ticket_status, tickets.ticketid, tickets.ticket_creation_date, users.first_name, users.last_name, users.userid FROM `tickets` JOIN `users` ON tickets.userid = users.userid WHERE  tickets.userid = '" + user_id + "' ORDER BY tickets.ticket_creation_date DESC"; 
 
         // execute query
         db.query(query, (err, result) => {
@@ -102,7 +154,7 @@ module.exports = {
             }
             res.render('ticketsopen-view.ejs', {
                 title: "View Open Tickets"
-                ,tickets: result
+                ,tickets: result,userinfo: req.params.id
             });
         });
 
@@ -110,7 +162,7 @@ module.exports = {
     viewTicketDetailsPage: (req, res) => {
         let ticket_id = req.params.id;
         let message = '';
-        let query = "SELECT tickets.ticket_subject, tickets.ticket_comments, tickets.ticket_status, tickets.ticketid, tickets.ticket_creation_date, users.first_name, users.last_name, users.email, users.phone FROM `tickets` JOIN `users` ON tickets.userid = users.userid WHERE  tickets.ticketid = '" + ticket_id + "'"; // query database to get all the players
+        let query = "SELECT tickets.ticket_subject, tickets.ticket_comments, tickets.ticket_status, tickets.ticketid, tickets.ticket_creation_date, users.first_name, users.last_name, users.email, users.phone FROM `tickets` JOIN `users` ON tickets.userid = users.userid WHERE  tickets.ticketid = '" + ticket_id + "'"; 
 
         // execute query
         db.query(query, (err, result) => {
@@ -126,58 +178,5 @@ module.exports = {
         });
 
     }
-    /* editPlayerPage: (req, res) => {
-        let playerId = req.params.id;
-        let query = "SELECT * FROM `players` WHERE id = '" + playerId + "' ";
-        db.query(query, (err, result) => {
-            if (err) {
-                return res.status(500).send(err);
-            }
-            res.render('edit-player.ejs', {
-                title: "Edit  Player"
-                ,player: result[0]
-                ,message: ''
-            });
-        });
-    },
-    editPlayer: (req, res) => {
-        let playerId = req.params.id;
-        let first_name = req.body.first_name;
-        let last_name = req.body.last_name;
-        let position = req.body.position;
-        let number = req.body.number;
-
-        let query = "UPDATE `players` SET `first_name` = '" + first_name + "', `last_name` = '" + last_name + "', `position` = '" + position + "', `number` = '" + number + "' WHERE `players`.`id` = '" + playerId + "'";
-        db.query(query, (err, result) => {
-            if (err) {
-                return res.status(500).send(err);
-            }
-            res.redirect('/');
-        });
-    },
-    deletePlayer: (req, res) => {
-        let playerId = req.params.id;
-        let getImageQuery = 'SELECT image from `players` WHERE id = "' + playerId + '"';
-        let deleteUserQuery = 'DELETE FROM players WHERE id = "' + playerId + '"';
-
-        db.query(getImageQuery, (err, result) => {
-            if (err) {
-                return res.status(500).send(err);
-            }
-
-            let image = result[0].image;
-
-            fs.unlink(`public/assets/img/${image}`, (err) => {
-                if (err) {
-                    return res.status(500).send(err);
-                }
-                db.query(deleteUserQuery, (err, result) => {
-                    if (err) {
-                        return res.status(500).send(err);
-                    }
-                    res.redirect('/');
-                });
-            });
-        });
-    } */
+    
 };
